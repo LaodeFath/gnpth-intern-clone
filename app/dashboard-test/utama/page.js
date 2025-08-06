@@ -1,12 +1,12 @@
-// "use client";
+"use client";
 
-// import React from "react";
-// import Tabel from "../../../components/dashboard/Tabel";
+import React from "react";
+import Profile from "../../../components/dashboard/Profile";
 
-// export default function Page() {
-//   return (
-//     <div className=" w-full px-4 py-8 overflow-x-auto">
-//       <Tabel />
-//     </div>
-//   );
-// }
+export default function Page() {
+  return (
+    <div className=" bg-black w-full px-4 py-8 overflow-x-auto">
+      <Profile />
+    </div>
+  );
+}
