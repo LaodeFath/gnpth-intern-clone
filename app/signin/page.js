@@ -35,7 +35,7 @@ export default function SignInPage() {
       if (result?.error) {
         setError('Invalid username or password')
       } else {
-        router.push('/dashboard-test')
+        router.push('/dashboard-test/recent')
       }
     } catch (error) {
       setError('Something went wrong. Please try again.')

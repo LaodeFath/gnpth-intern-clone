@@ -1,6 +1,6 @@
 import { ArrowLeft, Edit, Bell, Trash2 } from "lucide-react";
 
-export default function DetailCard() {
+export default function DetailSurat() {
   return (
     <div className="bg-white rounded-2xl shadow-lg overflow-hidden max-w-4xl mx-auto my-11">
       {/* Header */}

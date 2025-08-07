@@ -29,7 +29,7 @@ const handler = NextAuth({
 
   callbacks: {
     async redirect({ url, baseUrl }) {
-      return `${baseUrl}/dashboard-test`; // always go to dashboard after login
+      return `${baseUrl}/dashboard-test/recent`; // always go to dashboard after login
     },
   },
 
