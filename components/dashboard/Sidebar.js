@@ -1,13 +1,14 @@
 import React from "react";
 import Image from "next/image";
+import Link from "next/link"; // ⬅️ tambahkan ini
 
 export default function Sidebar({ isOpen }) {
   const menuItems = [
-    { icon: "/images/dashboard.png", label: "Dashboard" },
-    { icon: "/images/archive.png", label: "Archive" },
-    { icon: "/images/pinned.png", label: "Pinned" },
-    { icon: "/images/statistic.png", label: "Statistics" },
-    { icon: "/images/upload.png", label: "Export" },
+    { icon: "/images/dashboard.png", label: "Dashboard", href: "/dashboard-test/recent" },
+    { icon: "/images/archive.png", label: "Archive", href: "/archive" },
+    { icon: "/images/pinned.png", label: "Pinned", href: "/pinned" },
+    { icon: "/images/statistic.png", label: "Statistics", href: "/dashboard-test/stat" }, // ⬅️ route khusus
+    { icon: "/images/upload.png", label: "Export", href: "/export" },
   ];
 
   return (
@@ -37,8 +38,9 @@ export default function Sidebar({ isOpen }) {
         </div>
 
         {/* Menu Items */}
-        {menuItems.map(({ icon, label }, idx) => (
-          <div
+        {menuItems.map(({ icon, label, href }, idx) => (
+          <Link
+            href={href}
             key={idx}
             className="flex items-center gap-4 w-full px-4 hover:bg-[#496A71] py-2 rounded-md cursor-pointer"
           >
@@ -46,7 +48,7 @@ export default function Sidebar({ isOpen }) {
             {isOpen && (
               <span className="text-sm font-medium text-gray-100">{label}</span>
             )}
-          </div>
+          </Link>
         ))}
       </div>
     </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { FaUserNinja } from "react-icons/fa";
+import { useRouter } from "next/navigation"; // ⬅ Import router
 
 const letters = [
   { id: 1, title: "Title 1", purpose: "Surat Tugas", type: "Internal", date: "2025-07-25", avatar: "/images/Tartaglia.png" },
@@ -9,6 +10,8 @@ const letters = [
 ];
 
 export default function RecentLetters() {
+  const router = useRouter(); // ⬅ Bikin instance router
+
   return (
     <div className="grid grid-cols-12 mt-7">
       <div className="col-span-12 md:col-start-1 md:col-span-12 bg-[#CED4C1] rounded-xl overflow-hidden shadow-md flex flex-col h-full">
@@ -36,7 +39,10 @@ export default function RecentLetters() {
           </div>
 
           <div className="text-right mt-4">
-            <button className=" text-[#007C98] text-xs px-4 py-1 rounded-md hover:bg-[#d2dbc8] transition">
+            <button
+              onClick={() => router.push("/dashboard-test/tabel")} // ⬅ Routing ke halaman tujuan
+              className="text-[#007C98] text-xs px-4 py-1 rounded-md hover:bg-[#d2dbc8] transition"
+            >
               View All
             </button>
           </div>
