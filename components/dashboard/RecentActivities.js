@@ -31,9 +31,6 @@ export default function RecentActivities() {
         ))}
         
         <div className="text-right mt-6">
-          <button className="text-[#007C98] text-sm hover:underline py-1 px-1">
-            View All
-          </button>
         </div>
       </div>
     </div>

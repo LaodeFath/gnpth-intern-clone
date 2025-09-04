@@ -1,134 +1,76 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '../../../lib/prisma';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '../auth/[...nextauth]/route';
-import { generateNomorSurat } from '../../../utils/generateNomorSurat';
+// import { NextResponse } from "next/server";
+// import { prisma } from "../../../lib/prisma";
+// import { generateNomorSurat } from "../../../utils/generateNomorSurat";
 
-async function getSession(req) {
-  return await getServerSession(authOptions);
-}
+// export async function POST(request) {
+//   try {
+//     const body = await request.json();
+//     const { judul, pengirim, jenis, tujuan, departemen, isi, createdBy } = body;
 
-// GET - Ambil daftar surat dengan filter
-export async function GET(request) {
+//     if (!judul || !pengirim || !jenis || !tujuan || !departemen || !isi) {
+//       return NextResponse.json({ error: "Semua field wajib diisi" }, { status: 400 });
+//     }
+
+//     // generate nomor otomatis
+//     const refNumber = await generateNomorSurat(departemen);
+
+//     const surat = await prisma.surat.create({
+//       data: {
+//         judul,
+//         pengirim,
+//         jenis,
+//         tujuan,
+//         refNumber,      // pakai yang auto generate
+//         departemen,
+//         isi,
+//         createdBy: createdBy || "dummyUser",
+//       },
+//     });
+
+//     return NextResponse.json(surat, { status: 201 });
+//   } catch (error) {
+//     console.error("Error creating surat:", error);
+//     return NextResponse.json({ error: "Gagal membuat surat", details: error.message }, { status: 500 });
+//   }
+// }
+
+
+import { NextResponse } from "next/server";
+import prisma from "../../../lib/prisma";
+import { generateNomorSurat } from "../../../utils/generateNomorSurat";
+
+export async function POST(req) {
   try {
-    const session = await getSession(request);
-    
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const body = await req.json();
+    const { judul, tujuan, isi, pengirim, jenis, departemen, createdBy } = body;
+
+    if (!judul || !tujuan || !isi || !pengirim || !jenis || !departemen) {
+      return NextResponse.json({ error: "Semua field wajib diisi" }, { status: 400 });
     }
 
-    const { searchParams } = new URL(request.url);
-    const bulan = searchParams.get('bulan');
-    const tahun = searchParams.get('tahun');
-    const departemen = searchParams.get('departemen');
-    const kategori = searchParams.get('kategori');
-    const status = searchParams.get('status');
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '10');
-    
-    const where = {};
-    
-    // Filter berdasarkan departemen user (kecuali admin)
-    if (session.user.role !== 'admin') {
-      where.departemen = session.user.departemen;
-    }
-    
-    // Filter tambahan
-    if (bulan && tahun) {
-      const startDate = new Date(tahun, bulan - 1, 1);
-      const endDate = new Date(tahun, bulan, 0, 23, 59, 59);
-      where.tanggal = {
-        gte: startDate,
-        lte: endDate
-      };
-    }
-    
-    if (departemen) where.departemen = departemen;
-    if (kategori) where.kategori = kategori;
-    if (status) where.status = status;
-    
-    const skip = (page - 1) * limit;
-    
-    const [surat, total] = await Promise.all([
-      prisma.surat.findMany({
-        where,
-        include: {
-          user: {
-            select: {
-              name: true,
-              email: true
-            }
-          }
-        },
-        orderBy: {
-          createdAt: 'desc'
-        },
-        skip,
-        take: limit
-      }),
-      prisma.surat.count({ where })
-    ]);
-    
-    return NextResponse.json({
-      surat,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit)
-      }
-    });
-  } catch (error) {
-    console.error('Error fetching surat:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
-  }
-}
+    // generate nomor final
+    const refNumber = await generateNomorSurat(departemen);
 
-// POST - Buat surat baru
-export async function POST(request) {
-  try {
-    const session = await getSession(request);
-    
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const body = await request.json();
-    const { judul, kategori, departemen, perihal, tujuan, isi } = body;
-    
-    // Validasi input
-    if (!judul || !kategori || !departemen || !perihal || !tujuan || !isi) {
-      return NextResponse.json({ error: 'Semua field wajib diisi' }, { status: 400 });
-    }
-    
-    // Generate nomor surat otomatis
-    const nomorSurat = await generateNomorSurat(kategori, departemen);
-    
     const surat = await prisma.surat.create({
       data: {
-        nomorSurat,
         judul,
-        kategori,
-        departemen,
-        perihal,
         tujuan,
         isi,
-        createdBy: session.user.id,
-        status: 'draft'
+        pengirim,
+        jenis,
+        departemen,
+        refNumber,
+        createdBy: createdBy || "dummyUser",
+        status: "FINAL",
       },
-      include: {
-        user: {
-          select: {
-            name: true,
-            email: true
-          }
-        }
-      }
     });
-    
+
     return NextResponse.json(surat, { status: 201 });
-  } catch (error) {
-    console.error('Error creating surat:', error);
-    return NextResponse.json({ error: 'Gagal membuat surat' }, { status: 500 });
+  } catch (err) {
+    console.error("Error saving surat:", err);
+    return NextResponse.json(
+      { error: "Gagal simpan surat", detail: err.message },
+      { status: 500 }
+    );
   }
 }

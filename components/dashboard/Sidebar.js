@@ -5,10 +5,9 @@ import Link from "next/link"; // ⬅️ tambahkan ini
 export default function Sidebar({ isOpen }) {
   const menuItems = [
     { icon: "/images/dashboard.png", label: "Dashboard", href: "/dashboard-test/recent" },
-    { icon: "/images/archive.png", label: "Archive", href: "/archive" },
-    { icon: "/images/pinned.png", label: "Pinned", href: "/pinned" },
+    { icon: "/images/archive.png", label: "Archive", href: "/dashboard-test/tabel" },
+    { icon: "/images/pinned.png", label: "Pinned", href: "/dashboard-test/pinned" },
     { icon: "/images/statistic.png", label: "Statistics", href: "/dashboard-test/stat" }, // ⬅️ route khusus
-    { icon: "/images/upload.png", label: "Export", href: "/export" },
   ];
 
   return (
@@ -22,20 +21,25 @@ export default function Sidebar({ isOpen }) {
     >
       <div className="flex flex-col items-center mt-4 space-y-6 font-sans">
         {/* Logo */}
-        <div className="flex items-center mb-4 gap-2">
-          <Image
-            src="/images/logo.png"
-            alt="Logo"
-            width={40}
-            height={40}
-            className="object-contain"
-          />
-          {isOpen && (
-            <span className="text text-sm text-inter font-semibold text-gray-100">
-              Ganapatih Akasa Solutions
-            </span>
-          )}
-        </div>
+       <Link
+  href="https://ganapatih.com/"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="flex items-center mb-4 gap-2"
+>
+  <Image
+    src="/images/logo.png"
+    alt="Logo"
+    width={40}
+    height={40}
+    className="object-contain"
+  />
+  {isOpen && (
+    <span className="text text-sm text-inter font-semibold text-gray-100">
+      Ganapatih Akasa Solutions
+    </span>
+  )}
+</Link>
 
         {/* Menu Items */}
         {menuItems.map(({ icon, label, href }, idx) => (

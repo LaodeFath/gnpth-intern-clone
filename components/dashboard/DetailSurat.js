@@ -1,11 +1,17 @@
 import { ArrowLeft, Edit, Bell, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function DetailSurat() {
+  const router = useRouter();
+
   return (
     <div className="bg-white rounded-2xl shadow-lg overflow-hidden max-w-4xl mx-auto my-11">
       {/* Header */}
       <div className="bg-slate-600 px-4 py-3 flex items-center justify-between">
-        <button className="text-white hover:text-gray-300">
+         <button
+          className="text-white hover:text-gray-300"
+          onClick={() => router.back()} 
+        >
           <ArrowLeft size={20} />
         </button>
 
