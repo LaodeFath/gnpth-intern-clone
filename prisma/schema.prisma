@@ -75,6 +75,7 @@ model Surat {
   status     StatusSurat @default(DRAFT)   
   user       User       @relation(fields: [createdBy], references: [id])
   pinned      Boolean  @default(false) 
+  fileUrl    String? 
 }
 
 enum JenisSurat {

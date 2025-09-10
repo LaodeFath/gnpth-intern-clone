@@ -88,7 +88,7 @@ export default function DetailSurat() {
             </span>
           </div>
 
-          {/* Pin (belum ada fungsinya, tapi UI jalan) */}
+          {/* Pin (UI saja) */}
           <div className="relative group">
             <Bell className="cursor-pointer hover:text-gray-300" size={18} />
             <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 
@@ -145,12 +145,31 @@ export default function DetailSurat() {
             <h3 className="text-base font-semibold text-gray-900 mb-3">
               Summary
             </h3>
-            <div className="border border-gray-200 rounded-lg p-4">
+            <div className="border border-gray-200 rounded-lg p-4 mb-4">
               <p className="text-sm text-gray-700 leading-relaxed">
                 {surat.isi}
               </p>
             </div>
           </div>
+
+          {/* 📎 Attachment block */}
+          {surat.fileUrl && (
+            <div className="mt-6">
+              <h3 className="text-base font-semibold text-gray-900 mb-2">
+                Attachment
+              </h3>
+              <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                <a
+                  href={surat.fileUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-sm text-[#97AEA1] hover:underline"
+                >
+                   {surat.fileUrl.split("/").pop()}
+                </a>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

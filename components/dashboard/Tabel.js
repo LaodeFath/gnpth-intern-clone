@@ -35,7 +35,9 @@ export default function Tabel() {
       const updated = await res.json();
 
       setRows((prev) =>
-        prev.map((row) => (row.id === id ? { ...row, pinned: updated.pinned } : row))
+        prev.map((row) =>
+          row.id === id ? { ...row, pinned: updated.pinned } : row
+        )
       );
     } catch (err) {
       console.error("Gagal update pinned:", err);
@@ -156,7 +158,18 @@ export default function Tabel() {
               <div className="text-white">
                 {new Date(row.createdAt).toLocaleDateString("id-ID")}
               </div>
-              <div className="text-blue-200 underline cursor-pointer">View</div>
+              {row.fileUrl ? (
+                <a
+                  href={row.fileUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-200 underline cursor-pointer"
+                >
+                  View
+                </a>
+              ) : (
+                <span className="text-gray-300 italic">No File</span>
+              )}
             </div>
           ))
         ) : (

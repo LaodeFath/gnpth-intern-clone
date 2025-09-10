@@ -162,56 +162,81 @@
 //     return NextResponse.json({ error: "Gagal ambil surat" }, { status: 500 });
 //   }
 // }
+export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";
 import prisma from "../../../../lib/prisma";
+import fs from "fs/promises";
+import path from "path";
 
-// Ambil surat by ID
+// 📌 GET: ambil detail surat by ID
 export async function GET(req, { params }) {
   try {
-    const surat = await prisma.surat.findUnique({
-      where: { id: params.id },
-    });
+    const { id } = params;
+    const surat = await prisma.surat.findUnique({ where: { id } });
+
     if (!surat) {
       return NextResponse.json({ error: "Surat tidak ditemukan" }, { status: 404 });
     }
+
     return NextResponse.json(surat);
   } catch (err) {
+    console.error("❌ Error get surat:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
 
-// Update surat by ID
+// 📌 PUT: update surat
 export async function PUT(req, { params }) {
   try {
-    const body = await req.json();
+    const { id } = params;
+    const formData = await req.formData();
+
+    const updateData = {
+      judul: formData.get("judul"),
+      pengirim: formData.get("pengirim"),
+      jenis: formData.get("jenis"),
+      tujuan: formData.get("tujuan"),
+      refNumber: formData.get("refNumber"),
+      departemen: formData.get("departemen"),
+      isi: formData.get("isi"),
+    };
+
+    // kalau ada file baru, simpan ulang
+    const file = formData.get("file");
+    if (file && typeof file === "object") {
+      const bytes = await file.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+
+      const uploadDir = path.join(process.cwd(), "public", "uploads");
+      await fs.mkdir(uploadDir, { recursive: true });
+
+      const filePath = path.join(uploadDir, file.name);
+      await fs.writeFile(filePath, buffer);
+
+      updateData.fileUrl = `/uploads/${file.name}`;
+    }
+
     const surat = await prisma.surat.update({
-      where: { id: params.id },
-      data: {
-        judul: body.judul,
-        pengirim: body.pengirim,
-        jenis: body.jenis,
-        tujuan: body.tujuan,
-        refNumber: body.refNumber,
-        departemen: body.departemen,
-        isi: body.isi,
-      },
+      where: { id },
+      data: updateData,
     });
+
     return NextResponse.json(surat);
   } catch (err) {
+    console.error("❌ Error updating surat:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
 
-// Hapus surat by ID
+// 📌 DELETE: hapus surat
 export async function DELETE(req, { params }) {
   try {
-    await prisma.surat.delete({
-      where: { id: params.id },
-    });
-    return NextResponse.json({ message: "Surat berhasil dihapus" });
+    const { id } = params;
+    await prisma.surat.delete({ where: { id } });
+    return NextResponse.json({ success: true });
   } catch (err) {
+    console.error("❌ Error deleting surat:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
-
